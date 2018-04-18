@@ -32,7 +32,7 @@ class puzzle:
         currWolves = 0
         otherChick = 0
         otherWolves = 0
-        if self.boatBank == 0:
+        if self.boatBank == 1:
             currChick = self.chickensLeft
             currWolves = self.wolvesLeft
             otherChick = self.chickensRight
@@ -46,8 +46,10 @@ class puzzle:
         valid = False
         if currChick >= numChickens:
             if currWolves >= numWolves:
-                if (currChick - numChickens) >= (currWolves - numWolves):
-                    if (otherChick + numChickens) >= (otherWolves + numWolves):
+                newCurrChicks = currChick - numChickens
+                if newCurrChicks == 0 or newCurrChicks >= (currWolves - numWolves):
+                    newOtherChicks = otherChick + numChickens
+                    if newOtherChicks == 0 or newOtherChicks >= (otherWolves + numWolves):
                         valid = True
         return valid
     
@@ -59,10 +61,19 @@ class puzzle:
         x.wolvesRight = self.wolvesRight
         x.boatBank = self.boatBank
         return x
+    
+    def getBankName(self):
+        if self.boatBank == 1:
+            return 'left'
+        elif self.boatBank == 0:
+            return 'right'
+        return None
 
 class Node:
     State = puzzle()
     parent = None
+    moveMessage = ''
 
-    def __init__(self, parent):
+    def __init__(self, parent, State):
         self.parent = parent
+        self.State = State
