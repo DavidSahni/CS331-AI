@@ -6,23 +6,23 @@ class puzzle:
     boatBank = 0
 
     def moveAnimals(self, numChickens, numWolves):
-        if self.boatBank is 0: #boat is on left bank
+        if self.boatBank == 1: #boat is on left bank
             self.chickensLeft = self.chickensLeft - numChickens
             self.chickensRight = self.chickensRight + numChickens
             self.wolvesLeft = self.wolvesLeft - numWolves
             self.wolvesRight = self.wolvesRight + numWolves
-            boatBank = 1
-        elif boatBank is 1: #boat is on right bank
+            self.boatBank = 0
+        elif self.boatBank == 0: #boat is on right bank
             self.chickensLeft = self.chickensLeft + numChickens
             self.chickensRight = self.chickensRight - numChickens
             self.wolvesLeft = self.wolvesLeft + numWolves
             self.wolvesRight = self.wolvesRight - numWolves
-            self.boatBank = 0
+            self.boatBank = 1
 
     def printBoat(self):
-        if self.boatBank is 0:
+        if self.boatBank == 1:
             print("Boat is at Left Bank")    
-        else:
+        elif self.boatBank == 0:
             print("Boat is at Right Bank")
 
     def isMoveValid(self, numChickens, numWolves):
@@ -32,7 +32,7 @@ class puzzle:
         currWolves = 0
         otherChick = 0
         otherWolves = 0
-        if self.boatBank is 0:
+        if self.boatBank == 0:
             currChick = self.chickensLeft
             currWolves = self.wolvesLeft
             otherChick = self.chickensRight
@@ -61,4 +61,8 @@ class puzzle:
         return x
 
 class Node:
-    y = puzzle()
+    State = puzzle()
+    parent = None
+
+    def __init__(self, parent):
+        self.parent = parent
