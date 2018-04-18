@@ -6,15 +6,15 @@ def readFile(initFile, game):
     filePtr = open(initFile, 'r')
     data = filePtr.readline()
     leftSide = data.split(',')
-    game.chickensLeft = leftSide[0]
-    game.wolvesLeft = leftSide[1]
-    game.boatBank = leftSide[2]
+    game.chickensLeft = int(leftSide[0])
+    game.wolvesLeft = int(leftSide[1])
+    game.boatBank = int(leftSide[2])
 
     data = filePtr.readline()
     filePtr.close()
     rightSide = data.split(',')
-    game.chickensRight = rightSide[0]
-    game.wolvesRight = rightSide[1]
+    game.chickensRight = int(rightSide[0])
+    game.wolvesRight = int(rightSide[1])
 
 def printGame(game):
     print("Left Side Counts:")
@@ -25,20 +25,46 @@ def printGame(game):
     print("Wolves: ", game.wolvesRight)
     game.printBoat()
 
+def isPuzzleEqual(x, goal):
+    retval = True
+    if (x.chickensLeft != goal.chickensLeft):
+        retval = False
+    if (x.chickensRight != goal.chickensRight):
+        retval = False
+    if (x.wolvesLeft != goal.wolvesLeft):
+        retval = False
+    if (x.wolvesRight != goal.wolvesRight):
+        retval = False
+    if (x.boatBank != goal.boatBank):
+        retval = False
+    return retval
 
 def bfs(start, goal):
-    closed = []
+    closed = {}
     fringe = [start]
     while True:
+        node = fringe.pop()
         if len(fringe) < 1:
             return None
-        if isPuzzleEqual is True:
-            closed.append(fringe[len(fringe)])
-            return closed
+        if isPuzzleEqual(node.state, goal) is True:
+            return node
         else:
-            closed.append(fringe[len(fringe)])
+            if inClosed(closed, node.state) is False:
+                addClosed(closed, node.state)
+                #fringe.append(Expand(node))
             
 
+def inClosed(closed, target):
+    inSet = False
+    for i in closed.keys():
+        if isPuzzleEqual(target, closed[i]) is True:
+            inSet = True
+            break
+    return inSet
+
+def addClosed(closed, state):
+    i = len(closed)
+    closed[i] = state
 
 
 initFile = ""
@@ -57,6 +83,13 @@ else:
 
 readFile(initFile, start)
 printGame(start)
-
+x = start.copyToNew()
+closed = {}
+addClosed(closed, start)
+print(inClosed(closed, x))
+x.moveAnimals(1, 3)
+printGame(x)
+print(inClosed(closed, x))
+addClosed(closed, x)
 
 
