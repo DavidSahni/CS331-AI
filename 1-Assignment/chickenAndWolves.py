@@ -1,7 +1,8 @@
 from classFile import *
+from collections import deque
 import sys
 
-
+#reads in a file to a game (puzzle) object
 def readFile(initFile, game):
     filePtr = open(initFile, 'r')
     data = filePtr.readline()
@@ -16,6 +17,7 @@ def readFile(initFile, game):
     game.chickensRight = int(rightSide[0])
     game.wolvesRight = int(rightSide[1])
 
+#prints a puzzle
 def printGame(game):
     print("Left Side Counts:")
     print("Chickens: ", game.chickensLeft)
@@ -25,6 +27,7 @@ def printGame(game):
     print("Wolves: ", game.wolvesRight)
     game.printBoat()
 
+#compares two puzzle states for equality
 def isPuzzleEqual(x, goal):
     retval = True
     if (x.chickensLeft != goal.chickensLeft):
@@ -39,15 +42,16 @@ def isPuzzleEqual(x, goal):
         retval = False
     return retval
 
+#breadth first search, takes in start state and end state
 def bfs(start, goal):
     closed = {}
     startNode = Node(None, start)
-    fringe = [startNode]
+    fringe = deque([startNode])
     counter = 0
     while True:
         if len(fringe) < 1:
             return None
-        node = fringe.pop()
+        node = fringe.popleft()
         if isPuzzleEqual(node.State, goal) is True:
             print('expanded:', counter, "nodes")
             return node
@@ -57,6 +61,8 @@ def bfs(start, goal):
                 addClosed(closed, node.State)
                 fringe.extend(expandBfs(node))
 
+#expansion for breadth first search
+#just keeps it as a fifo stack
 def expandBfs(node):
     succesors = []
     generateSuccesors(succesors, node)
