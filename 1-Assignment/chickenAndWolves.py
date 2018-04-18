@@ -2,7 +2,7 @@ from classFile import puzzle
 import sys
 
 
-def readInitial(initFile, game):
+def readFile(initFile, game):
     filePtr = open(initFile, 'r')
     data = filePtr.readline()
     leftSide = data.split(',')
@@ -26,6 +26,21 @@ def printGame(game):
     game.printBoat()
 
 
+def bfs(start, goal):
+    closed = []
+    fringe = [start]
+    while True:
+        if len(fringe) < 1:
+            return None
+        if isPuzzleEqual is True:
+            closed.append(fringe[len(fringe)])
+            return closed
+        else:
+            closed.append(fringe[len(fringe)])
+            
+
+
+
 initFile = ""
 goalFile = ""
 outputFile = ""
@@ -38,9 +53,9 @@ else:
     initFile = sys.argv[1]
     goalFile = sys.argv[2]
     outputFile = sys.argv[3]
-    mode = sys.argv[4]
+    mode = sys.argv[4] 
 
-readInitial(initFile, start)
+readFile(initFile, start)
 printGame(start)
 
 

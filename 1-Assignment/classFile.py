@@ -25,5 +25,40 @@ class puzzle:
         else:
             print("Boat is at Right Bank")
 
+    def isMoveValid(self, numChickens, numWolves):
+        if numChickens + numWolves < 1:
+            return False
+        currChick = 0
+        currWolves = 0
+        otherChick = 0
+        otherWolves = 0
+        if self.boatBank is 0:
+            currChick = self.chickensLeft
+            currWolves = self.wolvesLeft
+            otherChick = self.chickensRight
+            otherWolves = self.wolvesRight
+        else:
+            otherChick = self.chickensLeft
+            otherWolves = self.wolvesLeft
+            currChick = self.chickensRight
+            currWolves = self.wolvesRight            
+
+        valid = False
+        if currChick >= numChickens:
+            if currWolves >= numWolves:
+                if (currChick - numChickens) >= (currWolves - numWolves):
+                    if (otherChick + numChickens) >= (otherWolves + numWolves):
+                        valid = True
+        return valid
+    
+    def copyToNew(self):
+        x = puzzle()
+        x.chickensLeft = self.chickensLeft
+        x.chickensRight = self.chickensRight
+        x.wolvesLeft = self.wolvesLeft
+        x.wolvesRight = self.wolvesRight
+        x.boatBank = self.boatBank
+        return x
+
 class Node:
     y = puzzle()
