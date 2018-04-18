@@ -68,6 +68,7 @@ def expandBfs(node):
     generateSuccesors(succesors, node)
     return succesors
 
+#generates succesors for a state and puts them in succesor object
 def generateSuccesors(succesors, node):
     state = node.State
     if state.isMoveValid(1, 0):
@@ -101,6 +102,7 @@ def generateSuccesors(succesors, node):
         newNode.moveMessage = "Sent 1 Chicken and 1 Wolf to " + x.getBankName()        
         succesors.append(newNode)
 
+#checks if a state is in the closed set
 def inClosed(closed, target):
     inSet = False
     for i in closed.keys():
@@ -109,10 +111,12 @@ def inClosed(closed, target):
             break
     return inSet
 
+#adds a new entry to the closed set
 def addClosed(closed, state):
     i = len(closed)
     closed[i] = state
-
+    
+#recursively prints the moves, soln is a node object
 def printSolutionStates(soln):
     if soln.parent is None:
         return
