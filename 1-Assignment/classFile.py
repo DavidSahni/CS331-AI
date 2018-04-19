@@ -21,7 +21,7 @@ class puzzle:
 
     def printBoat(self):
         if self.boatBank == 1:
-            print("Boat is at Left Bank")    
+            print("Boat is at Left Bank")
         elif self.boatBank == 0:
             print("Boat is at Right Bank")
 
@@ -41,7 +41,7 @@ class puzzle:
             otherChick = self.chickensLeft
             otherWolves = self.wolvesLeft
             currChick = self.chickensRight
-            currWolves = self.wolvesRight            
+            currWolves = self.wolvesRight
 
         valid = False
         if currChick >= numChickens:
@@ -52,7 +52,7 @@ class puzzle:
                     if newOtherChicks == 0 or newOtherChicks >= (otherWolves + numWolves):
                         valid = True
         return valid
-    
+
     def copyToNew(self):
         x = puzzle()
         x.chickensLeft = self.chickensLeft
@@ -61,7 +61,7 @@ class puzzle:
         x.wolvesRight = self.wolvesRight
         x.boatBank = self.boatBank
         return x
-    
+
     def getBankName(self):
         if self.boatBank == 1:
             return 'left'

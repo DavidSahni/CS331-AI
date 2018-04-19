@@ -42,6 +42,49 @@ def isPuzzleEqual(x, goal):
         retval = False
     return retval
 
+#iterative deeping depth first search, takes in start state and end state
+def iddfs(start, goal):
+    closed = {}
+    startNode = Node(None, start)
+    fringe = deque([startNode])
+    counter = 0
+    dlimit = 1
+    while True:
+        while counter < dlimit:
+            if len(fringe) < 1:
+                return None
+            node = fringe.popleft()
+            if isPuzzleEqual(node.State, goal) is True:
+                print('expanded:', counter, "nodes")
+                return node
+            else:
+                counter += 1
+                if inClosed(closed, node.State) is False:
+                    addClosed(closed, node.State)
+                    fringe.extend(expandBfs(node))
+        dlimit = (dlimit * 2) + 1
+        fringe = deque([startNode])
+        closed = {}
+
+#depth first search, takes in start state and end state
+def dfs(start, goal):
+    closed = {}
+    startNode = Node(None, start)
+    fringe = deque([startNode])
+    counter = 0
+    while True:
+        if len(fringe) < 1:
+            return None
+        node = fringe.popleft()
+        if isPuzzleEqual(node.State, goal) is True:
+            print('expanded:', counter, "nodes")
+            return node
+        else:
+            counter += 1
+            if inClosed(closed, node.State) is False:
+                addClosed(closed, node.State)
+                fringe.extendleft(expandBfs(node))
+
 #breadth first search, takes in start state and end state
 def bfs(start, goal):
     closed = {}
@@ -56,7 +99,7 @@ def bfs(start, goal):
             print('expanded:', counter, "nodes")
             return node
         else:
-            counter += 1 
+            counter += 1
             if inClosed(closed, node.State) is False:
                 addClosed(closed, node.State)
                 fringe.extend(expandBfs(node))
@@ -89,18 +132,19 @@ def generateSuccesors(succesors, node):
         newNode = Node(node, x)
         newNode.moveMessage = "Sent 1 Wolf to " + x.getBankName()
         succesors.append(newNode)
+    if state.isMoveValid(1, 1):
+        x = state.copyToNew()
+        x.moveAnimals(1, 1)
+        newNode = Node(node, x)
+        newNode.moveMessage = "Sent 1 Chicken and 1 Wolf to " + x.getBankName()
+        succesors.append(newNode)
     if state.isMoveValid(0, 2):
         x = state.copyToNew()
         x.moveAnimals(0, 2)
         newNode = Node(node, x)
         newNode.moveMessage = "Sent 2 Wolves to " + x.getBankName()
         succesors.append(newNode)
-    if state.isMoveValid(1, 1):
-        x = state.copyToNew()
-        x.moveAnimals(1, 1)
-        newNode = Node(node, x)
-        newNode.moveMessage = "Sent 1 Chicken and 1 Wolf to " + x.getBankName()        
-        succesors.append(newNode)
+
 
 #checks if a state is in the closed set
 def inClosed(closed, target):
@@ -115,7 +159,7 @@ def inClosed(closed, target):
 def addClosed(closed, state):
     i = len(closed)
     closed[i] = state
-    
+
 #recursively prints the moves, soln is a node object
 def printSolutionStates(soln):
     if soln.parent is None:
@@ -136,14 +180,21 @@ if len(sys.argv) != 5:
 else:
     initFile = sys.argv[1]
     goalFile = sys.argv[2]
-    outputFile = sys.argv[3]
-    mode = sys.argv[4] 
+    mode = sys.argv[3]
+    outputFile = sys.argv[4]
 
 readFile(initFile, start)
 readFile(goalFile, end)
-x = bfs(start, end)
-printGame(x.State)
+printGame(start)
+print
+
+if mode == 'bfs':
+    x = bfs(start, end)
+elif mode == 'dfs':
+    x = dfs(start, end)
+elif mode == 'iddfs':
+    x = iddfs(start, end)
+
 printSolutionStates(x)
-
-
-
+print
+printGame(x.State)
