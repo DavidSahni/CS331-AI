@@ -72,7 +72,6 @@ def expandBfs(node):
     return succesors
 
 #generates succesors for a state and puts them in succesor object
-counter = 1
 def generateSuccesors(succesors, node):
     state = node.State
     global itr
