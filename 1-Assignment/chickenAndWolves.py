@@ -50,24 +50,32 @@ def iddfs(start, goal):
     closed = {}
     startNode = Node(None, start)
     fringe = deque([startNode])
-    counter = 0
     dlimit = 1
+    maxDepth = 1500
     while True:
-        while counter < dlimit:
+        counter = 0
+        while True:
             if len(fringe) < 1:
-                return None
-            node = fringe.popleft()
+                break
+            node = fringe.pop()
             if isPuzzleEqual(node.State, goal) is True:
+                printSolutionStates(node, True)
+                printSolutionStates(node, False)
                 print('expanded:', counter, "nodes")
+                print(node.depth, 'nodes on solution path')
                 return node
             else:
-                counter += 1
-                if inClosed(closed, node.State) is False:
-                    addClosed(closed, node.State)
-                    fringe.extend(expandBfs(node))
+                if node.depth < dlimit: #only expand the node if its depth is less than limit
+                    # if inClosed(closed, node.State) is False:
+                    counter += 1
+                        # addClosed(closed, node.State)
+                    fringe.extend(expandDfs(node))
         dlimit = (dlimit * 2) + 1
         fringe = deque([startNode])
         closed = {}
+        if dlimit > maxDepth:
+            print('No Solution found in Max Depth Limit')
+            return
 
 #depth first search, takes in start state and end state
 def dfs(start, goal):
@@ -80,13 +88,16 @@ def dfs(start, goal):
             return None
         node = fringe.pop()
         if isPuzzleEqual(node.State, goal) is True:
+            printSolutionStates(node, True)
+            printSolutionStates(node, False)
             print('expanded:', counter, "nodes")
+            print(node.depth, 'nodes on solution path')
             return node
         else:
-            counter += 1
             if inClosed(closed, node.State) is False:
+                counter += 1
                 addClosed(closed, node.State)
-                fringe.extend(expandBfs(node))
+                fringe.extend(expandDfs(node))
 
 #breadth first search, takes in start state and end state
 def bfs(start, goal):
@@ -99,11 +110,14 @@ def bfs(start, goal):
             return None
         node = fringe.popleft()
         if isPuzzleEqual(node.State, goal) is True:
+            printSolutionStates(node, True)
+            printSolutionStates(node, False)
             print('expanded:', counter, "nodes")
+            print(node.depth, 'nodes on solution path')
             return node
         else:
-            counter += 1
             if inClosed(closed, node.State) is False:
+                counter += 1
                 addClosed(closed, node.State)
                 fringe.extend(expandBfs(node))
 
@@ -112,6 +126,16 @@ def bfs(start, goal):
 def expandBfs(node):
     succesors = []
     generateSuccesors(succesors, node)
+    for x in succesors:
+        x.depth = node.depth + 1
+    return succesors
+
+def expandDfs(node):
+    succesors = []
+    generateSuccesors(succesors, node)
+    for x in succesors:
+        x.depth = node.depth + 1
+    succesors.reverse() #since we are extending right and popping off end, need to put the first action first
     return succesors
 
 #generates succesors for a state and puts them in succesor object
@@ -158,7 +182,6 @@ def generateSuccesors(succesors, node):
         newNode.orderCount = next(itr)       
         succesors.append(newNode)
 
-
 #checks if a state is in the closed set
 def inClosed(closed, target):
     inSet = False
@@ -174,11 +197,14 @@ def addClosed(closed, state):
     closed[i] = state
 
 #recursively prints the moves, soln is a node object
-def printSolutionStates(soln):
+def printSolutionStates(soln, output):
     if soln.parent is None:
         return
-    printSolutionStates(soln.parent)
-    soln.State.printState()
+    printSolutionStates(soln.parent, output)
+    if output is False:
+        soln.State.printState()
+    elif output is True:
+        soln.State.printStateToFile(outputFile)
 
 
 def aStarSearch(start, goal):
@@ -195,11 +221,14 @@ def aStarSearch(start, goal):
         tup = heapq.heappop(fringe)
         node = tup[2]
         if isPuzzleEqual(node.State, goal) is True:
+            printSolutionStates(node, True)
+            printSolutionStates(node, False)
             print('expanded:', counter, "nodes")
+            print(node.depth, 'nodes on solution path')
             return node
         else:
-            counter += 1 
             if inClosed(closed, node.State) is False:
+                counter += 1
                 addClosed(closed, node.State)
                 expandAstr(fringe, node, goalBank)
 
@@ -207,6 +236,8 @@ def expandAstr(fringe, node, goalBank):
     succesors = []
     generateSuccesors(succesors, node)
     addSuccesors(fringe, succesors, goalBank, node)
+    for x in succesors:
+        x.depth = node.depth + 1
     #return succesors
 
 def addSuccesors(fringe, succs, goalBank, node):
@@ -242,6 +273,7 @@ end = puzzle()
 
 if len(sys.argv) != 5:
     print("Usage: < initial state file > < goal state file > < mode > < output file >")
+    exit()
 else:
     initFile = sys.argv[1]
     goalFile = sys.argv[2]
@@ -251,21 +283,17 @@ else:
 readFile(initFile, start)
 readFile(goalFile, end)
 printGame(start)
-news = start.copyToNew()
-x = bfs(start, end)
-printGame(x.State)
-printSolutionStates(x)
 
-printGame(news)
-x = aStarSearch(news, end)
-if x is None:
-    print("No Solution Found")
-printGame(x.State)
-printSolutionStates(x)
 
+x = Node(None, None)
 if mode == 'bfs':
     x = bfs(start, end)
 elif mode == 'dfs':
     x = dfs(start, end)
 elif mode == 'iddfs':
     x = iddfs(start, end)
+elif mode == 'astar':
+    x = aStarSearch(start, end)
+else:
+    print('Incorrect Mode!')
+    exit()

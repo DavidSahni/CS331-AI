@@ -88,11 +88,22 @@ class puzzle:
             return 'right'
         return None
 
+    def printStateToFile(self, filename):
+        fptr = open(filename, 'w')
+        print(self.chickensLeft, self.wolvesLeft, self.boatBank, sep=", ", file=fptr)
+        val = 0
+        if (self.boatBank == 0):
+            val = 1
+        else:
+            val = 0
+        print(self.chickensRight, self.wolvesRight, val, sep=", ", file=fptr)        
+
 class Node:
     State = puzzle()
     parent = None
     pathCost = 0 #number of moves to this point
     orderCount = 0 #maintain order and break heap ties
+    depth = 0
 
     def __init__(self, parent, State):
         self.parent = parent
