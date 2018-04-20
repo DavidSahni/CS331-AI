@@ -66,10 +66,10 @@ def iddfs(start, goal):
                 return node
             else:
                 if node.depth < dlimit: #only expand the node if its depth is less than limit
-                    # if inClosed(closed, node.State) is False:
-                    counter += 1
-                        # addClosed(closed, node.State)
-                    fringe.extend(expandDfs(node))
+                    if inClosed(closed, node.State) is False:
+                        counter += 1
+                        addClosed(closed, node.State)
+                        fringe.extend(expandDfs(node))
         dlimit = (dlimit * 2) + 1
         fringe = deque([startNode])
         closed = {}
