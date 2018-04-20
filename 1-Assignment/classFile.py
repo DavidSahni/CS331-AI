@@ -4,6 +4,18 @@ class puzzle:
     wolvesLeft = 0
     wolvesRight = 0
     boatBank = 0
+    numMoved = 0
+
+    def printState(self):
+        print(self.chickensLeft, self.wolvesLeft, self.boatBank, sep=", ")
+        val = 0
+        if (self.boatBank == 0):
+            val = 1
+        else:
+            val = 0
+        print(self.chickensRight, self.wolvesRight, val, sep=", ")
+        print()
+        
 
     def moveAnimals(self, numChickens, numWolves):
         if self.boatBank == 1: #boat is on left bank
@@ -18,6 +30,13 @@ class puzzle:
             self.wolvesLeft = self.wolvesLeft + numWolves
             self.wolvesRight = self.wolvesRight - numWolves
             self.boatBank = 1
+        self.numMoved = numChickens + numWolves
+
+    def getAnimalsLeft(self):
+        return self.chickensLeft + self.wolvesLeft
+    
+    def getAnimalsRight(self):
+        return self.chickensRight + self.wolvesRight
 
     def printBoat(self):
         if self.boatBank == 1:
@@ -72,7 +91,8 @@ class puzzle:
 class Node:
     State = puzzle()
     parent = None
-    moveMessage = ''
+    pathCost = 0 #number of moves to this point
+    orderCount = 0 #maintain order and break heap ties
 
     def __init__(self, parent, State):
         self.parent = parent
