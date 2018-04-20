@@ -75,7 +75,7 @@ def dfs(start, goal):
     while True:
         if len(fringe) < 1:
             return None
-        node = fringe.popleft()
+        node = fringe.pop()
         if isPuzzleEqual(node.State, goal) is True:
             print('expanded:', counter, "nodes")
             return node
@@ -83,7 +83,7 @@ def dfs(start, goal):
             counter += 1
             if inClosed(closed, node.State) is False:
                 addClosed(closed, node.State)
-                fringe.extendleft(expandBfs(node))
+                fringe.extend(expandBfs(node))
 
 #breadth first search, takes in start state and end state
 def bfs(start, goal):
