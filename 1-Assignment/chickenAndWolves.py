@@ -257,12 +257,12 @@ def heuristic(newnode, goalBank, Parent):
         if state.numMoved == 1:
             return 1
         else:
-            return 4
+            return 2
     elif goalBank != Parent.State.boatBank: #we are going to the goal bank, send as many as possible!
         if state.numMoved == 2:
             return 1
         else:
-            return 4
+            return 2
 
 initFile = ""
 goalFile = ""
