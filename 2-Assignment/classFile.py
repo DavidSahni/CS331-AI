@@ -9,11 +9,15 @@ class Node:
     parent = None
     childNodes = []
     #P(M|D) ordered [(m=t d=t), (m=t d=f)]
-    cpt = []
+    wordTrueClassTrue = float(0)
+    wordTrueClassFalse = float(0)
 
     def __init__(self, name, parentNode=None):
         self.parent = parentNode
         self.name = name
+
+    def printTable(self):
+        print(self.wordTrueClassTrue, self.wordTrueClassFalse)
 
 
 class AI:
@@ -27,9 +31,9 @@ class AI:
         self.vocab = vocab
 
     def findWord(self, word):
-        return self.vocab.index(word)
+        return self.vocab.index(word.lower())
 
     def getNode(self, word):
-        i = self.findWord(word)
+        i = self.findWord(word.lower())
         return self.parentNode.childNodes[i]
 

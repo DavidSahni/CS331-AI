@@ -5,7 +5,7 @@ from string import punctuation
 from classFile import *
 
 
-okChars = string.ascii_letters + '1' + '0'
+okChars = string.ascii_letters
 
 
 
@@ -46,7 +46,9 @@ def getVocab(trainFile, reviews):
 
     for i in range(len(data)):
         rev = Review()
-        l = data[i].split()
+        tabSep = data[i].split('\t')
+        rev.good = int(tabSep[1].split()[0])
+        l = tabSep[0].split()
         temp = []
         for s in l:
             x = ''
@@ -56,14 +58,7 @@ def getVocab(trainFile, reviews):
                 else:
                     continue
             temp.append(x)
-        #l = [''.join(c for c in s if c not in string.punctuation) for s in l]
         l = temp
-        while "0" in l:
-            rev.good = 0
-            l.remove("0")
-        while "1" in l:
-            rev.good = 1
-            l.remove("1")
             
         l = [element.lower() for element in l]
         l = list(set(l))
@@ -76,8 +71,48 @@ def getVocab(trainFile, reviews):
     filePtr.close()
     return sorted(vocab, key=str.lower)
 
-trainFile = ""
 
+def trainingPhase(ai):
+    numGood = trainClass(ai)
+    trainParams(ai, numGood)
+
+
+def trainClass(ai):
+    good = 0
+    for x in ai.features:
+        if x[len(x)-1] is 1:
+            good += 1
+    val = good/len(ai.features) #no dirichlet priors yet, just the class var
+    ai.parentNode.wordTrueClassTrue = val
+    ai.parentNode.wordTrueClassFalse = 1 - val
+    return good
+
+def trainParams(ai, numGood):
+    numBad = len(ai.features) - numGood
+    for i in range(len(ai.vocab)):
+        word = ai.vocab[i]
+        child = Node(word, ai.parentNode)
+        ai.parentNode.childNodes.append(child)
+        tt = 0 #count for num records word = true class = true
+        tf = 0 #count for num records word = true class = false
+        for feat in ai.features:
+            if feat[i] is 1:
+                if feat[len(feat)-1] is 0:
+                    tf += 1
+                elif feat[len(feat)-1] is 1:
+                    tt += 1
+        ProbTT = (tt +1)/(numGood + len(ai.vocab))
+        child.wordTrueClassTrue = float(ProbTT)
+        
+        ProbTF = (tf + 1)/(numBad + len(ai.vocab))
+        child.wordTrueClassFalse = float(ProbTF)
+
+
+
+
+
+
+trainFile = ""
 if len(sys.argv) != 3:
     print("Usage: classifier <trainfile> <testFile>")
     exit()
@@ -100,5 +135,7 @@ for x in testRev:
     featurize(x, trainVocab, testFeatures)
 
 
+classLabel = Node("CD")
+ai = AI(classLabel, trainFeatures, trainVocab)
+trainingPhase(ai)
 
-#print(readFile(trainFile))
