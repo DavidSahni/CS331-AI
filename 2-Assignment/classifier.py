@@ -5,7 +5,7 @@ from string import punctuation
 from classFile import *
 
 
-okChars = string.ascii_letters + '1' + '0'
+okChars = string.ascii_letters
 
 
 
@@ -89,7 +89,6 @@ def trainClass(ai):
 
 def trainParams(ai, numGood):
     numBad = len(ai.features) - numGood
-    print(numGood, numBad)
     for i in range(len(ai.vocab)):
         word = ai.vocab[i]
         child = Node(word, ai.parentNode)
