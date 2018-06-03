@@ -9,7 +9,7 @@ class Node:
     parent = None
     childNodes = []
     #P(M|D) ordered [(m=t d=t), (m=t d=f)]
-    cpt = (0, 0)
+    cpt = []
 
     def __init__(self, name, parentNode=None):
         self.parent = parentNode
