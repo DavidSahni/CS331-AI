@@ -19,6 +19,16 @@ class Node:
     def printTable(self):
         print(self.wordTrueClassTrue, self.wordTrueClassFalse)
 
+    def getValues(self, word, classLabel):
+        if word and classLabel:
+            return  self.wordTrueClassTrue
+        elif word and not classLabel:
+            return self.wordTrueClassFalse
+        elif not word and  classLabel:
+            return 1 - self.wordTrueClassFalse
+        elif not word and not classLabel:
+            return 1 - self.wordTrueClassFalse
+
 
 class AI:
     parentNode = None
