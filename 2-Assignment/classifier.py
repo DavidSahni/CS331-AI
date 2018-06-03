@@ -76,8 +76,45 @@ def getVocab(trainFile, reviews):
     filePtr.close()
     return sorted(vocab, key=str.lower)
 
-trainFile = ""
 
+def trainingPhase(ai):
+    numGood = trainClass(ai)
+    trainParams(ai, numGood)
+
+
+def trainClass(ai):
+    good = 0
+    for x in ai.features:
+        if x[len(x)-1] is 1:
+            good += 1
+    val = good/len(ai.features) #no dirichlet priors yet, just the class var
+    ai.parentNode.cpt.append(val)
+    return good
+
+def trainParams(ai, numGood):
+    numBad = len(ai.features) - numGood
+    for i in range(len(ai.vocab)):
+        word = ai.vocab[i]
+        child = Node(word, ai.parentNode)
+        tt = 0 #count for num records word = true class = true
+        tf = 0 #count for num records word = true class = false
+        for feat in ai.features:
+            if feat[i] is 1:
+                if feat[len(feat)-1] is 0:
+                    tf += 1
+                elif feat[len(feat)-1] is 1:
+                    tt += 1
+        ProbTT = (tt +1)/(numGood + len(ai.vocab))
+        child.cpt.append(ProbTT)
+        
+        ProbTF = (tf + 1)/(numBad + len(ai.vocab))
+        child.cpt.append(ProbTF)
+        ai.parentNode.childNodes.append(child)
+
+
+
+
+trainFile = ""
 if len(sys.argv) != 3:
     print("Usage: classifier <trainfile> <testFile>")
     exit()
@@ -98,6 +135,12 @@ for x in trainRev:
 
 for x in testRev:
     featurize(x, trainVocab, testFeatures)
+
+
+classLabel = Node("CD")
+ai = AI(classLabel, trainFeatures, trainVocab)
+trainingPhase(ai)
+
 
 
 
