@@ -27,16 +27,25 @@ def featurize(rev, vocab, features):
     features.append(feat)
 
 #prints a single features
-def printFeature(feat):
+def printFeature(feat, file="False", vocab=None):
     i = 0
-    for i in range(len(feat)-1):
-        print(feat[i], end=", ")
-    print(feat[i+1])
+    if file is "False":
+        for i in range(len(feat)-1):
+            print(feat[i], end=", ")
+        print(feat[i+1])
+    else:
+        fptr = open("preproccessed_"+ file + ".txt", 'w')
+        for i in range(len(vocab)-1):
+            print(vocab[i], end=", ", file=fptr)
+        print("classLabel", file=fptr)
+        for i in range(len(feat)-1):
+            print(feat[i], end=", ", file=fptr)
+        print(feat[i+1], file=fptr)
 
 #prints the entire list of features
-def printFeats(features):
+def printFeats(features, file="False", vocab=None):
     for i in range(len(features)):
-        printFeature(features[i])
+        printFeature(features[i], file, vocab)
 
 
 def getVocab(trainFile, reviews):
@@ -145,6 +154,8 @@ def predict(feature, vocab, ai):
 
 
 
+
+
 trainFile = ""
 if len(sys.argv) != 3:
     print("Usage: classifier <trainfile> <testFile>")
@@ -157,6 +168,7 @@ trainRev = []
 testRev = []
 
 trainVocab = getVocab(trainFile, trainRev)
+trainVocab.pop(0) #remove first empty item
 getVocab(testFile, testRev) #put test file data into review objects but dont save the vocab
 
 trainFeatures = []
@@ -167,10 +179,15 @@ for x in trainRev:
 for x in testRev:
     featurize(x, trainVocab, testFeatures)
 
+printFeature(trainFeatures, "train", trainVocab)
+printFeature(testFeatures, "test", trainVocab)
+
 
 classLabel = Node("CD")
 ai = AI(classLabel, trainFeatures, trainVocab)
 trainingPhase(ai)
+
 testingPhase(ai, trainVocab)
 ai.features = testFeatures
 testingPhase(ai, trainVocab)
+
