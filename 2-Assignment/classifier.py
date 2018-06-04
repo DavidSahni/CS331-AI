@@ -5,7 +5,6 @@ import string
 from string import punctuation
 from classFile import *
 import math
-import decimal
 
 okChars = string.ascii_letters
 
@@ -117,6 +116,7 @@ def testingPhase(ai, vocab):
         if predict(i, vocab, ai) == i[len(i)-1]:
             good += 1
     accuracy = good / total
+    print(accuracy)
 
 
 def predict(feature, vocab, ai):
@@ -124,28 +124,20 @@ def predict(feature, vocab, ai):
     j = 0
     prob1 = 0
     prob2 = 0
-    name = ""
     for i in range(len(vocab)):
-        name = vocab[i]
-        n = ai.getNode(name)
-        print(feature[i])
+        n = ai.getNodeIdx(i)
+        #print(feature[i])
         if feature[i] == 1:
-            prob1 += float(n.getValues(True,True))
+            prob1 += math.log(float(n.getValues(True,True)))
+            prob2 += math.log(float(n.getValues(True,False)))
         else:
-            prob1 += float(n.getValues(False,True))
+            prob1 += math.log(float(n.getValues(False,True)))
+            prob2 += math.log(float(n.getValues(False,False)))
+
 
     prob1 += math.log(n.parent.wordTrueClassTrue)
-    print(prob1)
-    for j in range(len(vocab)):
-        name = vocab[j]
-        n = ai.getNode(name)
-        if feature[j] == 1:
-            prob2 += float(n.getValues(True,False))
-        else:
-            prob2 += float(n.getValues(False,False))
-
     prob2 += math.log(n.parent.wordTrueClassFalse)
-    print(prob2)
+    #print(prob2)
     if prob1 > prob2:
         return 1
     else:
@@ -179,4 +171,6 @@ for x in testRev:
 classLabel = Node("CD")
 ai = AI(classLabel, trainFeatures, trainVocab)
 trainingPhase(ai)
-predict(testFeatures[0], trainVocab, ai)
+testingPhase(ai, trainVocab)
+ai.features = testFeatures
+testingPhase(ai, trainVocab)

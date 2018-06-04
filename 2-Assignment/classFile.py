@@ -47,3 +47,5 @@ class AI:
         i = self.findWord(word.lower())
         return self.parentNode.childNodes[i]
 
+    def getNodeIdx(self, i):
+        return self.parentNode.childNodes[i]
