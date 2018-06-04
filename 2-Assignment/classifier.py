@@ -125,7 +125,7 @@ def testingPhase(ai, vocab):
         if predict(i, vocab, ai) == i[len(i)-1]:
             good += 1
     accuracy = good / total
-    print(accuracy)
+    return str(accuracy)
 
 
 def predict(feature, vocab, ai):
@@ -182,12 +182,15 @@ for x in testRev:
 printFeature(trainFeatures, "train", trainVocab)
 printFeature(testFeatures, "test", trainVocab)
 
-
 classLabel = Node("CD")
 ai = AI(classLabel, trainFeatures, trainVocab)
 trainingPhase(ai)
 
-testingPhase(ai, trainVocab)
+f = open('results.txt','w')
+f.write("Training and Testing on training_text.txt Accuracy: ")
+f.write(str(testingPhase(ai, trainVocab)))
+f.write("\nTraining on training_text.txt and Testing on testing_text.txt Accuracy: ")
 ai.features = testFeatures
-testingPhase(ai, trainVocab)
-
+f.write(str(testingPhase(ai, trainVocab)))
+f.write("\n")
+f.close()
