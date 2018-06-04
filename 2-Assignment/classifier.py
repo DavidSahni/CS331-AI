@@ -1,9 +1,11 @@
 from __future__ import print_function
+from __future__ import division
 import sys
 import string
 from string import punctuation
 from classFile import *
-
+import math
+import decimal
 
 okChars = string.ascii_letters
 
@@ -15,7 +17,7 @@ def featurize(rev, vocab, features):
     rev.words.sort(key=str.lower) #if not already
 
     feat = [0] * (len(vocab) +1)
-    
+
     for i in range(len(rev.words)):
         if rev.words[i] in vocab:
             idx = vocab.index(rev.words[i])
@@ -52,14 +54,14 @@ def getVocab(trainFile, reviews):
         temp = []
         for s in l:
             x = ''
-            for c in s: 
+            for c in s:
                 if c in okChars:
                     x = x + c
                 else:
                     continue
             temp.append(x)
         l = temp
-            
+
         l = [element.lower() for element in l]
         l = list(set(l))
         rev.words = sorted(l, key=str.lower)
@@ -103,12 +105,51 @@ def trainParams(ai, numGood):
                     tt += 1
         ProbTT = (tt +1)/(numGood + len(ai.vocab))
         child.wordTrueClassTrue = float(ProbTT)
-        
+
         ProbTF = (tf + 1)/(numBad + len(ai.vocab))
         child.wordTrueClassFalse = float(ProbTF)
 
 
+def testingPhase(ai, vocab):
+    good = 0
+    total = len(ai.features)
+    for i in ai.features:
+        if predict(i, vocab, ai) == i[len(i)-1]:
+            good += 1
+    accuracy = good / total
 
+
+def predict(feature, vocab, ai):
+    i = 0
+    j = 0
+    prob1 = 0
+    prob2 = 0
+    name = ""
+    for i in range(len(vocab)):
+        name = vocab[i]
+        n = ai.getNode(name)
+        print(feature[i])
+        if feature[i] == 1:
+            prob1 += float(n.getValues(True,True))
+        else:
+            prob1 += float(n.getValues(False,True))
+
+    prob1 += math.log(n.parent.wordTrueClassTrue)
+    print(prob1)
+    for j in range(len(vocab)):
+        name = vocab[j]
+        n = ai.getNode(name)
+        if feature[j] == 1:
+            prob2 += float(n.getValues(True,False))
+        else:
+            prob2 += float(n.getValues(False,False))
+
+    prob2 += math.log(n.parent.wordTrueClassFalse)
+    print(prob2)
+    if prob1 > prob2:
+        return 1
+    else:
+        return 0
 
 
 
@@ -138,4 +179,4 @@ for x in testRev:
 classLabel = Node("CD")
 ai = AI(classLabel, trainFeatures, trainVocab)
 trainingPhase(ai)
-
+predict(testFeatures[0], trainVocab, ai)
